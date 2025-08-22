@@ -300,7 +300,7 @@ router.get('/stream/:videoId', async (req, res) => {
     }
 
     const user = userRows[0];
-    const userLogin = user.usuario || (user.email ? user.email.split('@')[0] : `user_${user.codigo}`);
+    const userLogin = decoded.usuario || user.usuario || (user.email ? user.email.split('@')[0] : `user_${user.codigo}`);
 
     // Decodificar videoId (base64)
     let remotePath;

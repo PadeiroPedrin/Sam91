@@ -15,8 +15,19 @@ router.get('/videos', authMiddleware, async (req, res) => {
     const folderId = req.query.folder_id;
 
     let whereClause = 'WHERE v.codigo_cliente = ?';
-    const params = [userId];
+    let params = [userId];
 
+    if (folderId) {
+      whereClause += ' AND v.pasta = ?';
+      params.push(folderId);
+    }
+    
+    // Adicionar suporte para usuários de streaming
+    whereClause = `WHERE (v.codigo_cliente = ? OR v.codigo_cliente IN (
+      SELECT codigo_cliente FROM streamings WHERE codigo = ?
+    ))`;
+    params = [userId, userId];
+    
     if (folderId) {
       whereClause += ' AND v.pasta = ?';
       params.push(folderId);

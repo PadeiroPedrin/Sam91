@@ -13,8 +13,11 @@ router.get('/status', authMiddleware, async (req, res) => {
 
         // Buscar servidor do usuário
         const [serverRows] = await db.execute(
-            'SELECT servidor_id FROM folders WHERE user_id = ? LIMIT 1',
-            [userId]
+            `SELECT servidor_id FROM folders 
+             WHERE (user_id = ? OR user_id IN (
+               SELECT codigo_cliente FROM streamings WHERE codigo = ?
+             )) LIMIT 1`,
+            [userId, userId]
         );
         const serverId = serverRows.length > 0 ? serverRows[0].servidor_id : 1;
 
