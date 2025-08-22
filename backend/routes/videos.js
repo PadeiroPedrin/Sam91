@@ -189,9 +189,11 @@ router.get('/', authMiddleware, async (req, res) => {
         largura,
         altura
        FROM videos 
-       WHERE codigo_cliente = ? AND pasta = ?
+       WHERE (codigo_cliente = ? OR codigo_cliente IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       )) AND pasta = ?
        ORDER BY id DESC`,
-      [userId, folderId]
+      [userId, userId, folderId]
     );
 
     console.log(`📁 Buscando vídeos na pasta: ${folderName} (ID: ${folderId})`);

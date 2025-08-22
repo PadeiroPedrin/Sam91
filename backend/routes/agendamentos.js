@@ -26,10 +26,12 @@ router.get('/', authMiddleware, async (req, res) => {
       FROM playlists_agendamentos pa
       LEFT JOIN playlists p ON pa.codigo_playlist = p.id
       LEFT JOIN playlists pf ON pa.codigo_playlist_finalizacao = pf.id
-      WHERE pa.codigo_stm = ?
+      WHERE (pa.codigo_stm = ? OR pa.codigo_stm IN (
+        SELECT codigo_cliente FROM streamings WHERE codigo = ?
+      ))
     `;
 
-    const params = [userId];
+    const params = [userId, userId];
 
     if (mesAno) {
       query += ' AND DATE_FORMAT(pa.data, "%Y-%m") = ?';

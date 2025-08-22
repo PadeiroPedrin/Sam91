@@ -18,9 +18,11 @@ router.get('/', authMiddleware, async (req, res) => {
         intervalo_videos,
         ativo
        FROM comerciais_config 
-       WHERE codigo_stm = ?
+       WHERE (codigo_stm = ? OR codigo_stm IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       ))
        ORDER BY codigo`,
-      [userId]
+      [userId, userId]
     );
 
     res.json(rows);

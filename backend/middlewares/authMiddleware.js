@@ -70,7 +70,7 @@ const authMiddleware = async (req, res, next) => {
 
       const user = rows[0];
       req.user = {
-        id: user.codigo,
+        id: user.codigo_cliente || user.codigo,
         nome: user.nome,
         email: user.email,
         usuario: user.usuario,

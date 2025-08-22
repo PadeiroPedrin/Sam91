@@ -17,7 +17,7 @@ router.get('/obs-config', authMiddleware, async (req, res) => {
         bitrate, espectadores, espaco, espaco_usado, aplicacao,
         status_gravando, transcoder, transcoder_qualidades
        FROM streamings 
-       WHERE codigo_cliente = ? OR codigo = ? LIMIT 1`,
+       WHERE (codigo_cliente = ? OR codigo = ?) AND status = 1 LIMIT 1`,
       [userId, userId]
     );
 

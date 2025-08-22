@@ -11,8 +11,13 @@ router.get('/', authMiddleware, async (req, res) => {
     const userId = req.user.id;
 
     const [rows] = await db.execute(
-      'SELECT id, nome, total_videos, duracao_total FROM playlists WHERE codigo_stm = ? ORDER BY id',
-      [userId]
+      `SELECT id, nome, total_videos, duracao_total 
+       FROM playlists 
+       WHERE (codigo_stm = ? OR codigo_stm IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       )) 
+       ORDER BY id`,
+      [userId, userId]
     );
 
     res.json(rows);

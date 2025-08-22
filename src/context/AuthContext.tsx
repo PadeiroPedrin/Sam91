@@ -14,6 +14,7 @@ const userSchema = z.object({
   espaco: z.number(),
   email: z.string().min(1, 'Email ou usuário é obrigatório'),
   codigo_servidor: z.number().nullable().optional(),
+  codigo_cliente: z.number().nullable().optional(),
 });
 
 type User = z.infer<typeof userSchema>;
@@ -67,7 +68,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Garantir que o tipo seja definido se não estiver presente
         const userDataWithType = {
           ...userData,
-          tipo: userData.tipo || 'streaming' // Valor padrão se não estiver definido
+          tipo: userData.tipo || 'streaming', // Valor padrão se não estiver presente
+          codigo_cliente: userData.codigo_cliente || null
         };
         const validatedUser = userSchema.parse(userDataWithType);
         setUser(validatedUser);
@@ -122,7 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Garantir que o tipo seja definido
         const userDataWithType = {
           ...data.user,
-          tipo: data.user.tipo || 'streaming'
+          tipo: data.user.tipo || 'streaming',
+          codigo_cliente: data.user.codigo_cliente || null
         };
         const validatedUser = userSchema.parse(userDataWithType);
         setUser(validatedUser);

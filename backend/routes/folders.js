@@ -23,9 +23,11 @@ router.get('/', authMiddleware, async (req, res) => {
         data_criacao,
         status
        FROM folders 
-       WHERE user_id = ? AND status = 1
+       WHERE (user_id = ? OR user_id IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       )) AND status = 1
        ORDER BY data_criacao DESC`,
-      [userId]
+      [userId, userId]
     );
 
     res.json(rows);

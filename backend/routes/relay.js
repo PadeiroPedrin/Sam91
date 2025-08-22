@@ -31,10 +31,12 @@ router.get('/status', authMiddleware, async (req, res) => {
         s.identificacao as stream_name
        FROM relay_config r
        LEFT JOIN streamings s ON r.codigo_stm = s.codigo_cliente
-       WHERE r.codigo_stm = ? AND r.status IN ('ativo', 'erro')
+       WHERE (r.codigo_stm = ? OR r.codigo_stm IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       )) AND r.status IN ('ativo', 'erro')
        ORDER BY r.data_inicio DESC
        LIMIT 1`,
-      [userId]
+      [userId, userId]
     );
 
     if (rows.length === 0) {

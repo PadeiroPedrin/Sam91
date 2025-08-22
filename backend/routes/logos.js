@@ -64,9 +64,11 @@ router.get('/', authMiddleware, async (req, res) => {
         tipo_arquivo,
         data_upload as created_at
        FROM logos 
-       WHERE codigo_stm = ?
+       WHERE (codigo_stm = ? OR codigo_stm IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       ))
        ORDER BY data_upload DESC`,
-      [userId]
+      [userId, userId]
     );
 
     // Ajustar URLs para serem acessíveis via HTTP

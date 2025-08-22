@@ -16,16 +16,16 @@ router.get('/', authMiddleware, async (req, res) => {
     // Filtrar por período
     switch (periodo) {
       case '1h':
-        whereClause += ' AND atualizacao >= DATE_SUB(NOW(), INTERVAL 1 HOUR)';
+        whereClause += ' AND (atualizacao >= DATE_SUB(NOW(), INTERVAL 1 HOUR) OR data >= DATE_SUB(NOW(), INTERVAL 1 HOUR))';
         break;
       case '24h':
-        whereClause += ' AND atualizacao >= DATE_SUB(NOW(), INTERVAL 24 HOUR)';
+        whereClause += ' AND (atualizacao >= DATE_SUB(NOW(), INTERVAL 24 HOUR) OR data >= DATE_SUB(NOW(), INTERVAL 24 HOUR))';
         break;
       case '7d':
-        whereClause += ' AND atualizacao >= DATE_SUB(NOW(), INTERVAL 7 DAY)';
+        whereClause += ' AND (atualizacao >= DATE_SUB(NOW(), INTERVAL 7 DAY) OR data >= DATE_SUB(NOW(), INTERVAL 7 DAY))';
         break;
       case '30d':
-        whereClause += ' AND atualizacao >= DATE_SUB(NOW(), INTERVAL 30 DAY)';
+        whereClause += ' AND (atualizacao >= DATE_SUB(NOW(), INTERVAL 30 DAY) OR data >= DATE_SUB(NOW(), INTERVAL 30 DAY))';
         break;
     }
 
@@ -41,10 +41,10 @@ router.get('/', authMiddleware, async (req, res) => {
         player as dispositivo,
         '' as navegador,
         '' as resolucao,
-        TIMESTAMPDIFF(SECOND, atualizacao, NOW()) as tempo_visualizacao,
-        (TIMESTAMPDIFF(MINUTE, atualizacao, NOW()) < 5) as ativo,
-        atualizacao as created_at,
-        atualizacao as ultima_atividade
+        TIMESTAMPDIFF(SECOND, COALESCE(atualizacao, data), NOW()) as tempo_visualizacao,
+        (TIMESTAMPDIFF(MINUTE, COALESCE(atualizacao, data), NOW()) < 5) as ativo,
+        COALESCE(atualizacao, data) as created_at,
+        COALESCE(atualizacao, data) as ultima_atividade
        FROM espectadores_conectados 
        ${whereClause}
        ORDER BY atualizacao DESC`,

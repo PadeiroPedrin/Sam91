@@ -44,8 +44,10 @@ router.get('/', authMiddleware, async (req, res) => {
         language,
         timezone
        FROM user_settings 
-       WHERE user_id = ?`,
-      [userId]
+       WHERE (user_id = ? OR user_id IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       ))`,
+      [userId, userId]
     );
 
     if (rows.length > 0) {
@@ -101,8 +103,11 @@ router.post('/', authMiddleware, async (req, res) => {
 
     // Verificar se já existe configuração para o usuário
     const [existingRows] = await db.execute(
-      'SELECT user_id FROM user_settings WHERE user_id = ?',
-      [userId]
+      `SELECT user_id FROM user_settings 
+       WHERE (user_id = ? OR user_id IN (
+         SELECT codigo_cliente FROM streamings WHERE codigo = ?
+       ))`,
+      [userId, userId]
     );
 
     const menuItemsJson = menu_items ? JSON.stringify(menu_items) : null;

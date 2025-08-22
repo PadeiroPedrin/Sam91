@@ -178,7 +178,7 @@ router.get('/me', async (req, res) => {
     }
     
     res.json({
-      id: user.codigo,
+      id: user.codigo_cliente || user.codigo,
       nome: user.nome,
       email: user.email,
       usuario: user.usuario,
